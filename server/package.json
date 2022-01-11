@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "description": "ChatApp with MERN Stack",
+  "main": "index.js",
+  "author": "Oscar Vargas",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon --config nodemon.json src/app.ts"
+  },
+  "dependencies": {
+    "config": "^3.3.6",
+    "dayjs": "^1.10.7",
+    "express": "^4.17.2",
+    "mongo": "^0.1.0",
+    "pino": "^7.6.3",
+    "pino-pretty": "^7.3.0",
+    "socket.io": "^4.4.1",
+    "typescript": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/config": "^0.0.41",
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.8",
+    "@types/pino": "^7.0.5",
+    "ts-node": "^10.4.0"
+  }
+}
