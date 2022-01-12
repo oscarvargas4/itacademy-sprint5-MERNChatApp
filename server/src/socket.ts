@@ -9,7 +9,7 @@ function socket({ io }: { io: Server }) {
   logger.info(`Sockets enabled`);
 
   io.on(EVENTS.connection, (socket: Socket) => {
-    logger.info(`user connected ${socket.id}`);
+    logger.info(`User connected ${socket.id}`);
   });
 }
 
