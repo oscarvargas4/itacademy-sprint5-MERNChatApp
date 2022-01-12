@@ -4,7 +4,6 @@ import { Server } from 'socket.io';
 import config from 'config';
 import logger from './utils/logger';
 import { version } from '../package.json';
-
 import socket from './socket';
 
 const port = config.get<number>('port');
