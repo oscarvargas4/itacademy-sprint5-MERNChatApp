@@ -24,6 +24,8 @@ function socket({ io }: { io: Server }) {
   io.on(EVENTS.connection, (socket: Socket) => {
     logger.info(`User connected ${socket.id}`);
 
+    socket.emit(EVENTS.SERVER.ROOMS, rooms);
+
     // When a user creates a new room
     socket.on(EVENTS.CLIENT.CREATE_ROOM, ({ roomName }) => {
       console.log({ roomName });
@@ -58,7 +60,7 @@ function socket({ io }: { io: Server }) {
         socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
           message,
           username,
-          time: `${date.getHours()}:${date.getMinutes}`,
+          time: `${date.getHours()}:${date.getMinutes()}`,
         });
       }
     );

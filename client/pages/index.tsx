@@ -5,7 +5,7 @@ import { useSockets } from '../context/socket.context';
 
 import RoomsContainer from '../containers/Rooms';
 import MessageContainer from '../containers/Messages';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function Home() {
   const { socket, username, setUsername } = useSockets();
@@ -19,8 +19,13 @@ export default function Home() {
 
     setUsername(value);
 
-    localStorage.setItem('username', value);
+    localStorage.setItem('username', value); // ! MongoDB
   }
+
+  useEffect(() => {
+    if (usernameRef)
+      usernameRef.current.value = localStorage.getItem('username') || '';
+  }, []);
 
   return (
     <div>
@@ -28,7 +33,9 @@ export default function Home() {
         <div className={styles.usernameWrapper}>
           <div className={styles.usernameInner}>
             <input placeholder="Username" ref={usernameRef} />
-            <button onClick={handleSetUsername}>START</button>
+            <button className="cta" onClick={handleSetUsername}>
+              START
+            </button>
           </div>
         </div>
       )}
