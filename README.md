@@ -56,7 +56,7 @@
 
 ![Open project](img/terminalSplit.png)
 
-![Open project](img/spit.PNG)
+![Open project](img/split.PNG)
 
 2. In `server`console:
 
