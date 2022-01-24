@@ -3,7 +3,6 @@
 ### Project Structure
 
 - <b>client</b>:
-  - <b>.next</b>
   - <b>config</b>
     - <b>default.ts</b>
     - <b>events.ts</b>
