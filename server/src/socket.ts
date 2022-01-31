@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import logger from './utils/logger';
 import { Server, Socket } from 'socket.io';
+import mongoose from 'mongoose';
+import UserModel from './models/User';
 
 const EVENTS = {
   connection: 'connection',
@@ -8,6 +10,7 @@ const EVENTS = {
     CREATE_ROOM: 'CREATE_ROOM',
     SEND_ROOM_MESSAGE: 'SEND_ROOM_MESSAGE',
     JOIN_ROOM: 'JOIN_ROOM',
+    USER: 'USER',
   },
   SERVER: {
     ROOMS: 'ROOM',
@@ -23,6 +26,18 @@ function socket({ io }: { io: Server }) {
 
   io.on(EVENTS.connection, (socket: Socket) => {
     logger.info(`User connected ${socket.id}`);
+
+    // Username identification // TODO
+    socket.on(EVENTS.CLIENT.USER, async (username) => {
+      let user = await UserModel.findOne({ name: username });
+
+      if (!user) {
+        user = new UserModel({
+          name: username,
+        });
+        await user.save();
+      }
+    });
 
     socket.emit(EVENTS.SERVER.ROOMS, rooms);
 

@@ -6,6 +6,7 @@ import { useSockets } from '../context/socket.context';
 import RoomsContainer from '../containers/Rooms';
 import MessageContainer from '../containers/Messages';
 import { useEffect, useRef } from 'react';
+import EVENTS from '../config/events';
 
 export default function Home() {
   const { socket, username, setUsername } = useSockets();
@@ -20,6 +21,9 @@ export default function Home() {
     setUsername(value);
 
     localStorage.setItem('username', value); // TODO MongoDB
+
+    // MongoDB user identification or registration
+    socket.emit(EVENTS.CLIENT.USER, value);
   }
 
   useEffect(() => {
