@@ -34,7 +34,22 @@ function SocketsProvider(props: any) {
     window.onfocus = function () {
       document.title = 'Chat app';
     };
+
+    // const getRooms = async () => {
+    //   const roomsFromServer = await fetchRooms();
+    //   setRooms(roomsFromServer);
+    // };
+
+    // ? getRooms();
   }, []);
+
+  // // Fetch Rooms
+  // const fetchRooms = async () => {
+  //   const res = await fetch('http://localhost:4000/rooms');
+  //   const data = await res.json();
+
+  //   return data;
+  // };
 
   socket.on(EVENTS.SERVER.ROOMS, (value) => {
     setRooms(value);

@@ -3,7 +3,7 @@ import logger from './utils/logger';
 import { Server, Socket } from 'socket.io';
 import mongoose from 'mongoose';
 import { UserModel } from './models/User';
-import RoomModel from './models/Room';
+import { RoomModel } from './models/Room';
 
 const EVENTS = {
   connection: 'connection',
@@ -25,11 +25,11 @@ const rooms: Record<string, { name: string }> = {};
 function socket({ io }: { io: Server }) {
   logger.info(`Sockets enabled`);
 
-  io.on(EVENTS.connection, (socket: Socket) => {
+  io.on(EVENTS.connection, async (socket: Socket) => {
     logger.info(`User connected ${socket.id}`);
 
     // Username identification // TODO
-    socket.on(EVENTS.CLIENT.USER, async (username) => {
+    socket.on(EVENTS.CLIENT.USER, async (username: string) => {
       let user = await UserModel.findOne({ name: username });
 
       if (!user) {

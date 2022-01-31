@@ -1,11 +1,11 @@
 import express from 'express';
-import { RoomModel } from '../models/Room';
+import MessageModel from '../models/Message';
 
 const router = express.Router();
 
 router.get('', async (req, res) => {
-  const rooms = await RoomModel.find({});
-  res.json(rooms);
+  const messages = await MessageModel.find({});
+  res.json(messages);
 });
 
 module.exports = router;

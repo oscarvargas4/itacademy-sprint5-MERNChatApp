@@ -24,6 +24,7 @@ const io = new Server(httpServer, {
 
 app.use('/rooms', require('./routes/rooms'));
 app.use('/users', require('./routes/users'));
+app.use('/messages', require('./routes/messages'));
 
 app.get('/', (_, res) =>
   res.send(`Server is up and running version ${version}`)
