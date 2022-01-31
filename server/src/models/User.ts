@@ -1,13 +1,13 @@
-import { Schema, model, connect } from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 interface User {
   name: String;
 }
 
-const schema = new Schema<User>({
+const UserSchema = new Schema<User>({
   name: { type: String, required: true },
 });
 
-const UserModel = model<User>('User', schema);
+const UserModel = model<User>('User', UserSchema);
 
-export default UserModel;
+export { UserSchema, UserModel };

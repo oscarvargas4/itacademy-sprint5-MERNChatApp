@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 import logger from './utils/logger';
 import { Server, Socket } from 'socket.io';
 import mongoose from 'mongoose';
-import UserModel from './models/User';
+import { UserModel } from './models/User';
 
 const EVENTS = {
   connection: 'connection',
