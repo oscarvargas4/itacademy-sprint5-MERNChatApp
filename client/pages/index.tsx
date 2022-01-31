@@ -19,12 +19,12 @@ export default function Home() {
 
     setUsername(value);
 
-    localStorage.setItem('username', value); // ! MongoDB
+    localStorage.setItem('username', value); // TODO MongoDB
   }
 
   useEffect(() => {
     if (usernameRef)
-      usernameRef.current.value = localStorage.getItem('username') || '';
+      usernameRef.current.value = localStorage.getItem('username') || ''; // TODO MongoDB
   }, []);
 
   return (

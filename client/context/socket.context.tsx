@@ -29,7 +29,7 @@ function SocketsProvider(props: any) {
   const [rooms, setRooms] = useState({});
   const [messages, setMessages] = useState([]);
 
-  // Effect on title tab "New message"
+  // Effect on title tab
   useEffect(() => {
     window.onfocus = function () {
       document.title = 'Chat app';
@@ -43,15 +43,16 @@ function SocketsProvider(props: any) {
   socket.on(EVENTS.SERVER.JOINED_ROOM, (value) => {
     setRoomId(value);
 
-    setMessages([]);
+    setMessages([]); // TODO add messages persistence - load old messages
   });
 
   socket.on(EVENTS.SERVER.ROOM_MESSAGE, ({ message, username, time }) => {
+    // Effect on title tab "New message"
     if (!document.hasFocus()) {
       document.title = 'New message...';
     }
 
-    setMessages([...messages, { message, username, time }]);
+    setMessages([...messages, { message, username, time }]); // TODO set persistence in database - create message in DB
   });
 
   return (
