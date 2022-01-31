@@ -8,6 +8,8 @@ interface Room {
 
 const schema = new Schema<Room>({
   name: { type: String, required: true },
+  users: [UserSchema],
+  // messages
 });
 
 const RoomModel = model<Room>('Room', schema);

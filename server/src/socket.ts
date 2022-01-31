@@ -3,6 +3,7 @@ import logger from './utils/logger';
 import { Server, Socket } from 'socket.io';
 import mongoose from 'mongoose';
 import { UserModel } from './models/User';
+import RoomModel from './models/Room';
 
 const EVENTS = {
   connection: 'connection',
@@ -42,11 +43,17 @@ function socket({ io }: { io: Server }) {
     socket.emit(EVENTS.SERVER.ROOMS, rooms);
 
     // When a user creates a new room
-    socket.on(EVENTS.CLIENT.CREATE_ROOM, ({ roomName }) => {
-      console.log({ roomName });
+    socket.on(EVENTS.CLIENT.CREATE_ROOM, async ({ roomName }) => {
+      // TODO Find Room in DB or Create it
+      let room = await RoomModel.findOne({ name: roomName });
+      if (!room) {
+        room = new RoomModel({ name: roomName });
+        await room.save();
+      }
 
       // Create a roomId
-      const roomId = nanoid();
+      // ? const roomId = nanoid();
+      const roomId = room.toObject()._id.toString(); // getting ObjectId value from MongoDB _id
 
       // Add new roomId to the rooms object
       rooms[roomId] = {
