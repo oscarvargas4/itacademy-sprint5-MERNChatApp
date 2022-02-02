@@ -13,7 +13,9 @@ interface Context {
   rooms: object;
 }
 
-const socket = io(SOCKET_URL);
+const socket = io(SOCKET_URL, {
+  withCredentials: true,
+});
 
 const SocketContext = createContext<Context>({
   socket,
@@ -55,10 +57,24 @@ function SocketsProvider(props: any) {
     setRooms(value);
   });
 
-  socket.on(EVENTS.SERVER.JOINED_ROOM, (value) => {
-    setRoomId(value);
+  socket.on(EVENTS.SERVER.JOINED_ROOM, (roomId) => {
+    setRoomId(roomId);
+    let room: object = { room: roomId };
 
-    setMessages([]); // TODO add messages persistence - load old messages
+    fetch('http://localhost:4000/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(room),
+    })
+      .then((serverMessages) => serverMessages.json())
+      .then((oldMessages) => {
+        setMessages(oldMessages);
+      })
+      .catch(() => setMessages([]));
+
+    //setMessages([]); // TODO add messages persistence - load old messages
   });
 
   socket.on(EVENTS.SERVER.ROOM_MESSAGE, ({ message, username, time }) => {

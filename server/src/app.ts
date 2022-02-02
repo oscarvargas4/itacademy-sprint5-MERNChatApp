@@ -18,10 +18,13 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: corsOrigin,
+    methods: ['GET', 'POST'],
+    allowedHeaders: [''],
     credentials: true,
   },
 });
 
+app.use(express.json());
 app.use('/rooms', require('./routes/rooms'));
 app.use('/users', require('./routes/users'));
 app.use('/messages', require('./routes/messages'));

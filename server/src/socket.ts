@@ -96,8 +96,28 @@ function socket({ io }: { io: Server }) {
     );
 
     // When a user joins a room
-    socket.on(EVENTS.CLIENT.JOIN_ROOM, (roomId) => {
+    socket.on(EVENTS.CLIENT.JOIN_ROOM, async (roomId) => {
       socket.join(roomId);
+
+      // interface Messages {
+      //   _id: any;
+      //   room: string;
+      //   user: string;
+      //   messageBody: string;
+      //   time: string;
+      //   __v?: number;
+      // }
+
+      // let messagesRoom: Messages[] = await MessageModel.find({ room: roomId });
+      // let messagesFormated: Array<object> = [];
+      // for (let i = 0; i < messagesRoom.length; i++) {
+      //   let username: string = messagesRoom[i].user;
+      //   let message: string = messagesRoom[i].messageBody;
+      //   let time: string = messagesRoom[i].time;
+      //   messagesFormated[i] = { username, message, time };
+      // }
+
+      // console.log(messagesFormated);
 
       socket.emit(EVENTS.SERVER.JOINED_ROOM, roomId);
     });
