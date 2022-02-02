@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io';
 import mongoose from 'mongoose';
 import { UserModel } from './models/User';
 import { RoomModel } from './models/Room';
+import MessageModel from './models/Message';
 
 const EVENTS = {
   connection: 'connection',
@@ -76,8 +77,15 @@ function socket({ io }: { io: Server }) {
     // When a user sends a room message
     socket.on(
       EVENTS.CLIENT.SEND_ROOM_MESSAGE,
-      ({ roomId, message, username }) => {
+      async ({ roomId, message, username }) => {
         const date = new Date();
+        // TODO register message in DB
+        await MessageModel.create({
+          room: roomId,
+          user: username,
+          messageBody: message,
+          time: `${date.getHours()}:${date.getMinutes()}`,
+        });
 
         socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
           message,

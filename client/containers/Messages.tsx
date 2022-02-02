@@ -30,6 +30,8 @@ function MessagesContainer() {
       },
     ]);
     newMessageRef.current.value = '';
+
+    console.log(messages);
   }
 
   // Messages scroll down
