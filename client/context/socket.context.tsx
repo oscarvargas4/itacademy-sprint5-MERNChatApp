@@ -13,7 +13,9 @@ interface Context {
   rooms: object;
 }
 
-const socket = io(SOCKET_URL);
+const socket = io(SOCKET_URL, {
+  withCredentials: true,
+});
 
 const SocketContext = createContext<Context>({
   socket,
@@ -29,29 +31,59 @@ function SocketsProvider(props: any) {
   const [rooms, setRooms] = useState({});
   const [messages, setMessages] = useState([]);
 
-  // Effect on title tab "New message"
+  // Effect on title tab
   useEffect(() => {
     window.onfocus = function () {
       document.title = 'Chat app';
     };
+
+    // const getRooms = async () => {
+    //   const roomsFromServer = await fetchRooms();
+    //   setRooms(roomsFromServer);
+    // };
+
+    // ? getRooms();
   }, []);
+
+  // // Fetch Rooms
+  // const fetchRooms = async () => {
+  //   const res = await fetch('http://localhost:4000/rooms');
+  //   const data = await res.json();
+
+  //   return data;
+  // };
 
   socket.on(EVENTS.SERVER.ROOMS, (value) => {
     setRooms(value);
   });
 
-  socket.on(EVENTS.SERVER.JOINED_ROOM, (value) => {
-    setRoomId(value);
+  socket.on(EVENTS.SERVER.JOINED_ROOM, (roomId) => {
+    setRoomId(roomId);
+    let room: object = { room: roomId };
 
-    setMessages([]);
+    fetch('http://localhost:4000/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(room),
+    })
+      .then((serverMessages) => serverMessages.json())
+      .then((oldMessages) => {
+        setMessages(oldMessages);
+      })
+      .catch(() => setMessages([]));
+
+    //setMessages([]); // TODO add messages persistence - load old messages
   });
 
   socket.on(EVENTS.SERVER.ROOM_MESSAGE, ({ message, username, time }) => {
+    // Effect on title tab "New message"
     if (!document.hasFocus()) {
       document.title = 'New message...';
     }
 
-    setMessages([...messages, { message, username, time }]);
+    setMessages([...messages, { message, username, time }]); // TODO set persistence in database - create message in DB
   });
 
   return (

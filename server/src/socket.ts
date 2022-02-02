@@ -1,6 +1,10 @@
 import { nanoid } from 'nanoid';
 import logger from './utils/logger';
 import { Server, Socket } from 'socket.io';
+import mongoose from 'mongoose';
+import { UserModel } from './models/User';
+import { RoomModel } from './models/Room';
+import MessageModel from './models/Message';
 
 const EVENTS = {
   connection: 'connection',
@@ -8,6 +12,7 @@ const EVENTS = {
     CREATE_ROOM: 'CREATE_ROOM',
     SEND_ROOM_MESSAGE: 'SEND_ROOM_MESSAGE',
     JOIN_ROOM: 'JOIN_ROOM',
+    USER: 'USER',
   },
   SERVER: {
     ROOMS: 'ROOM',
@@ -21,17 +26,35 @@ const rooms: Record<string, { name: string }> = {};
 function socket({ io }: { io: Server }) {
   logger.info(`Sockets enabled`);
 
-  io.on(EVENTS.connection, (socket: Socket) => {
+  io.on(EVENTS.connection, async (socket: Socket) => {
     logger.info(`User connected ${socket.id}`);
+
+    // Username identification // TODO
+    socket.on(EVENTS.CLIENT.USER, async (username: string) => {
+      let user = await UserModel.findOne({ name: username });
+
+      if (!user) {
+        user = new UserModel({
+          name: username,
+        });
+        await user.save();
+      }
+    });
 
     socket.emit(EVENTS.SERVER.ROOMS, rooms);
 
     // When a user creates a new room
-    socket.on(EVENTS.CLIENT.CREATE_ROOM, ({ roomName }) => {
-      console.log({ roomName });
+    socket.on(EVENTS.CLIENT.CREATE_ROOM, async ({ roomName }) => {
+      // TODO Find Room in DB or Create it
+      let room = await RoomModel.findOne({ name: roomName });
+      if (!room) {
+        room = new RoomModel({ name: roomName });
+        await room.save();
+      }
 
       // Create a roomId
-      const roomId = nanoid();
+      // ? const roomId = nanoid();
+      const roomId = room.toObject()._id.toString(); // getting ObjectId value from MongoDB _id
 
       // Add new roomId to the rooms object
       rooms[roomId] = {
@@ -54,8 +77,15 @@ function socket({ io }: { io: Server }) {
     // When a user sends a room message
     socket.on(
       EVENTS.CLIENT.SEND_ROOM_MESSAGE,
-      ({ roomId, message, username }) => {
+      async ({ roomId, message, username }) => {
         const date = new Date();
+        // TODO register message in DB
+        await MessageModel.create({
+          room: roomId,
+          user: username,
+          messageBody: message,
+          time: `${date.getHours()}:${date.getMinutes()}`,
+        });
 
         socket.to(roomId).emit(EVENTS.SERVER.ROOM_MESSAGE, {
           message,
@@ -66,8 +96,28 @@ function socket({ io }: { io: Server }) {
     );
 
     // When a user joins a room
-    socket.on(EVENTS.CLIENT.JOIN_ROOM, (roomId) => {
+    socket.on(EVENTS.CLIENT.JOIN_ROOM, async (roomId) => {
       socket.join(roomId);
+
+      // interface Messages {
+      //   _id: any;
+      //   room: string;
+      //   user: string;
+      //   messageBody: string;
+      //   time: string;
+      //   __v?: number;
+      // }
+
+      // let messagesRoom: Messages[] = await MessageModel.find({ room: roomId });
+      // let messagesFormated: Array<object> = [];
+      // for (let i = 0; i < messagesRoom.length; i++) {
+      //   let username: string = messagesRoom[i].user;
+      //   let message: string = messagesRoom[i].messageBody;
+      //   let time: string = messagesRoom[i].time;
+      //   messagesFormated[i] = { username, message, time };
+      // }
+
+      // console.log(messagesFormated);
 
       socket.emit(EVENTS.SERVER.JOINED_ROOM, roomId);
     });

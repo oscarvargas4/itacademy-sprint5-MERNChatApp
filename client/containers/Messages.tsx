@@ -19,6 +19,8 @@ function MessagesContainer() {
 
     const date = new Date();
 
+    // TODO register message on MongoDB
+
     setMessages([
       ...messages,
       {
