@@ -6,6 +6,7 @@ import config from 'config';
 import logger from './utils/logger';
 import { version } from '../package.json';
 import socket from './socket';
+const cors = require('cors');
 
 const port = config.get<number>('port');
 const host = config.get<string>('host');
@@ -24,6 +25,7 @@ const io = new Server(httpServer, {
   },
 });
 
+app.use(cors());
 app.use(express.json());
 app.use('/rooms', require('./routes/rooms'));
 app.use('/users', require('./routes/users'));

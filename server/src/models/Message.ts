@@ -1,6 +1,4 @@
 import { Schema, model } from 'mongoose';
-import { UserSchema } from './User';
-import { RoomSchema } from './Room';
 
 interface Message {
   room: string;
